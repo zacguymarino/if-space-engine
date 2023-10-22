@@ -1472,7 +1472,7 @@ function getActionHTML(actionId, className) {
                         Action(s)
                         <span class='${className}'>The following boxes are for constructing the various accepted user inputs for this action (requires only "Full Actions" or "Constructed Actions" to be filled in, not both)</span>
                         </label>`;
-  let pureActionDivStart = `<div class="divBorder">
+  let pureActionDivStart = `<div class="divBorder fullAction">
                             <label class='tooltip'>
                             Full Actions
                             <span class='${className}'>Comma separated list of complete actions (Useful for when a verb and noun pair is not present or necessary - e.g. gameplay passwords and other simple dialogue) [Ignores: a, an, the, to, for, at - unless otherwise defined]</span>
@@ -2060,17 +2060,26 @@ function removeObject(objectId) {
 
 async function checkConstructedActionInputs() {
   let constructedInputs = $(".constructedInput");
-  let constructedInputsActive = false;
+  let voidActionInputArray = [];
+  let validActionInputArray = [];
   await new Promise(res => setTimeout(res, 100));
   for (let i = 0; i < constructedInputs.length; i++) {
+    let actionId = $(constructedInputs[i]).parent().siblings(".fullAction").find(".actionInput").attr("id");
     if ($(constructedInputs[i]).val() != '') {
-      constructedInputsActive = true;
+      if (!voidActionInputArray.includes(actionId) && !validActionInputArray.includes(actionId)) {
+        voidActionInputArray.push(actionId);
+      }
+    } else {
+      if (!voidActionInputArray.includes(actionId) && !validActionInputArray.includes(actionId)) {
+        validActionInputArray.push(actionId);
+      }
     }
   }
-  if (constructedInputsActive) {
-    $(".actionInput").css("background-color", "#FFCCCB");
-  } else {
-    $(".actionInput").css("background-color", "#4d4d4d");
+  for (let i = 0; i < voidActionInputArray.length; i++) {
+    $(`#${voidActionInputArray[i]}`).css("background-color", "#FFCCCB");
+  }
+  for (let i = 0; i < validActionInputArray.length; i++) {
+    $(`#${validActionInputArray[i]}`).css("background-color", "#4d4d4d");
   }
 }
 
