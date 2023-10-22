@@ -2239,7 +2239,9 @@ function parseAction(input) {
             let actionWords = cNodeActions[h].split(" ");
             let wordsMatch = true;
             for (let i = 0; i < actionWords.length; i++) {
-                if (!action.includes(actionWords[i].toUpperCase())) {
+                let actionWord = actionWords[i].toUpperCase();
+                let regexPattern = new RegExp(`\\b${actionWord}\\b`, 'g');
+                if (!regexPattern.test(action)) {
                     wordsMatch = false;
                     break;
                 }
@@ -2315,13 +2317,13 @@ function parseAction(input) {
                             if (game[currentNode].actions.actions[i].primaryNouns != '') {
                                 constructedInputsActive = true;
                             }
-                            if (game[currentNode].actions.actions[i].secondaryIndex != '') {
+                            if (game[currentNode].actions.actions[i].secondaryNouns != '') {
                                 constructedInputsActive = true;
                             }
                             if (game[currentNode].actions.actions[i].requiredWords != '') {
                                 constructedInputsActive = true;
                             }
-                            if (!constructedInputsActive){
+                            if (!constructedInputsActive) {
                                 foundPureActionMatch = true;
                                 let passed = false;
                                 let actionObject = JSON.parse(JSON.stringify(game[currentNode].actions.actions[i]));
@@ -2454,7 +2456,9 @@ function parseAction(input) {
         let userActionWords = action.split(" ");
         let userItems = getPlayerItemNameList();
         for (let i = 0; i < useWords.length; i++) {
-            if (action.includes(useWords[i])) {
+            let useWord = useWords[i].toUpperCase();
+            let regexPattern = new RegExp(`\\b${useWord}\\b`, 'g');
+            if (regexPattern.test(action)) {
                 useAction = true;
                 break;
             }
@@ -2509,7 +2513,9 @@ function parseAction(input) {
                                                     if (primaryUses[r].includes("[")) {
                                                         let useArray = primaryUses[r].slice(1, -1).split(/,\s*/);
                                                         for (let s = 0; s < actionVerbs.length; s++) {
-                                                            if (useArray.includes(actionVerbs[s])) {
+                                                            let actionVerb = actionVerbs[s].toUpperCase();
+                                                            let regexPattern = new RegExp(`\\b${actionVerb}\\b`, 'g');
+                                                            if (regexPattern.test(useArray)) {
                                                                 for (let t = 0; t < useArray.length; t++) {
                                                                     foundItemPrimaryUses.push(useArray[t]);
                                                                 }
@@ -2596,13 +2602,19 @@ function parseAction(input) {
                 }
             }
             for (let j = 0; j < actionVerbs.length; j++) {
-                if (action.includes(actionVerbs[j].toUpperCase())) {
+                let actionVerb = actionVerbs[j].toUpperCase();
+                let regexPattern = new RegExp(`\\b${actionVerb}\\b`, 'g');
+                if (regexPattern.test(action)) {
                     if (primaryNouns.length > 0) {
                         for (let k = 0; k < primaryNouns.length; k++) {
-                            if (action.includes(primaryNouns[k].toUpperCase())) {
+                            let primaryNoun = primaryNouns[k].toUpperCase();
+                            let regexPattern = new RegExp(`\\b${primaryNoun}\\b`, 'g');
+                            if (regexPattern.test(action)) {
                                 if (secondaryNouns.length > 0) {
                                     for (let m = 0; m < secondaryNouns.length; m++) {
-                                        if (action.includes(secondaryNouns[m].toUpperCase())) {
+                                        let secondaryNoun = secondaryNouns[m].toUpperCase();
+                                        let regexPattern = new RegExp(`\\b${secondaryNoun}\\b`, 'g');
+                                        if (regexPattern.test(action)) {
                                             potentialConstructedAction = true;
                                         }
                                     }
@@ -2618,7 +2630,9 @@ function parseAction(input) {
                         let primaryIndex;
                         let secondaryIndex;
                         for (let k = 0; k < requiredWords.length; k++) {
-                            if (!action.includes(requiredWords[k].toUpperCase())) {
+                            let requiredWord = requiredWords[k].toUpperCase();
+                            let regexPattern = new RegExp(`\\b${requiredWord}\\b`, 'g');
+                            if (!regexPattern.test(action)) {
                                 potentialConstructedAction = false;
                             }
                         }
@@ -2700,13 +2714,19 @@ function parseAction(input) {
                 }
             }
             for (let j = 0; j < actionVerbs.length; j++) {
-                if (action.includes(actionVerbs[j].toUpperCase())) {
+                let actionVerb = actionVerbs[j].toUpperCase();
+                let regexPattern = new RegExp(`\\b${actionVerb}\\b`, 'g');
+                if (regexPattern.test(action)) {
                     if (primaryNouns.length > 0) {
                         for (let k = 0; k < primaryNouns.length; k++) {
-                            if (action.includes(primaryNouns[k].toUpperCase())) {
+                            let primaryNoun = primaryNouns[k].toUpperCase();
+                            let regexPattern = new RegExp(`\\b${primaryNoun}\\b`, 'g');
+                            if (regexPattern.test(action)) {
                                 if (secondaryNouns.length > 0) {
                                     for (let m = 0; m < secondaryNouns.length; m++) {
-                                        if (action.includes(secondaryNouns[m].toUpperCase())) {
+                                        let secondaryNoun = secondaryNouns[m].toUpperCase();
+                                        let regexPattern = new RegExp(`\\b${secondaryNoun}\\b`, 'g');
+                                        if (regexPattern.test(action)) {
                                             potentialConstructedAction = true;
                                         }
                                     }
@@ -2722,7 +2742,9 @@ function parseAction(input) {
                         let primaryIndex;
                         let secondaryIndex;
                         for (let k = 0; k < requiredWords.length; k++) {
-                            if (!action.includes(requiredWords[k].toUpperCase())) {
+                            let requiredWord = requiredWords[k].toUpperCase();
+                            let regexPattern = new RegExp(`\\b${requiredWord}\\b`, 'g');
+                            if (!regexPattern.test(action)) {
                                 potentialConstructedAction = false;
                             }
                         }
