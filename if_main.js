@@ -316,4 +316,9 @@ $(function () {
       $(event.currentTarget).closest(".requirements").find(".thisBlock").css("display", "none");
     }
   });
+
+  //Check for constructed action inputs and handle pureAction validity
+  $(document).on("keydown", ".constructedInput", async function(event) {
+    dom.checkConstructedActionInputs();
+  })
 });

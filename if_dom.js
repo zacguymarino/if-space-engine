@@ -905,6 +905,7 @@ function loadDomFromNode(node) {
       }
     }
   }
+  checkConstructedActionInputs();
 
   $("#winDes").val(win.description);
   if (win.reqNot == "true") {
@@ -1469,14 +1470,14 @@ function getActionHTML(actionId, className) {
   let rmvButton = `<button class='removeObject'>Remove Action</button>`;
   let actionLabel = `<label class='tooltip'>
                         Action(s)
-                        <span class='${className}'>The following boxes are for constructing the various accepted user inputs for this action</span>
+                        <span class='${className}'>The following boxes are for constructing the various accepted user inputs for this action (requires only "Full Actions" or "Constructed Actions" to be filled in, not both)</span>
                         </label>`;
   let pureActionDivStart = `<div class="divBorder">
                             <label class='tooltip'>
                             Full Actions
                             <span class='${className}'>Comma separated list of complete actions (Useful for when a verb and noun pair is not present or necessary - e.g. gameplay passwords and other simple dialogue) [Ignores: a, an, the, to, for, at - unless otherwise defined]</span>
                             </label>`;
-  let actions = `<input type='text' id='${actionId}_Actions'>`;
+  let actions = `<input type='text' class="actionInput" id='${actionId}_Actions'>`;
   let includeOnly = `<span style="display: flex">
                         <label class='tooltip'>
                         Need only include: 
@@ -1494,22 +1495,22 @@ function getActionHTML(actionId, className) {
                           Verb(s)
                           <span class='${className}'>Comma separated list of accepted verbs for this action (e.g. cut, break, smash)</span>
                           </label>`;
-  let actionVerbs = `<input type='text' id='${actionId}_actionVerbs'>`;
+  let actionVerbs = `<input type='text' class='constructedInput' id='${actionId}_actionVerbs'>`;
   let primaryNounsLabel = `<label class='tooltip'>
                           Primary Noun(s)
                           <span class='${className}'>Comma separated list of primary nouns for this action (e.g. lock, padlock)</span>
                           </label>`;
-  let primaryNouns = `<input type='text' id='${actionId}_primaryNouns'>`;
+  let primaryNouns = `<input type='text' class='constructedInput' id='${actionId}_primaryNouns'>`;
   let secondaryNounsLabel = `<label class='tooltip'>
                             Secondary Noun(s)
                             <span class='${className}'>Comma separated list of secondary nouns for this action (e.g. box, chest)</span>
                             </label>`;
-  let secondaryNouns = `<input type='text' id='${actionId}_secondaryNouns'>`;
+  let secondaryNouns = `<input type='text' class='constructedInput' id='${actionId}_secondaryNouns'>`;
   let requiredWordsLabel = `<label class='tooltip'>
                             Required Word(s)
                             <span class='${className}'>Comma separated list of required words for this action (e.g. with, use)</span>
                             </label>`;
-  let requiredWords = `<input type='text' id='${actionId}_requiredWords'>`;
+  let requiredWords = `<input type='text' class='constructedInput' id='${actionId}_requiredWords'>`;
   let constructedActionDivEnd = `</div>`;
   let maxLabel = `<label class='tooltip'>
                     Max Uses
@@ -2057,6 +2058,22 @@ function removeObject(objectId) {
   $(`#${objectId}`).remove();
 }
 
+async function checkConstructedActionInputs() {
+  let constructedInputs = $(".constructedInput");
+  let constructedInputsActive = false;
+  await new Promise(res => setTimeout(res, 100));
+  for (let i = 0; i < constructedInputs.length; i++) {
+    if ($(constructedInputs[i]).val() != '') {
+      constructedInputsActive = true;
+    }
+  }
+  if (constructedInputsActive) {
+    $(".actionInput").css("background-color", "#FFCCCB");
+  } else {
+    $(".actionInput").css("background-color", "#4d4d4d");
+  }
+}
+
 export {
   directions,
   addItem,
@@ -2085,5 +2102,6 @@ export {
   showHideNotBoxes,
   changeStyle,
   handleGlobalCheckboxes,
-  setNodeColor
+  setNodeColor,
+  checkConstructedActionInputs
 };

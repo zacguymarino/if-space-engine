@@ -2307,125 +2307,141 @@ function parseAction(input) {
                     let variants = game[currentNode].actions.actions[i].actions.toUpperCase().split(/\s*,\s*/);
                     for (let m = 0; m < variants.length; m++) {
                         if (filterIgnorables(variants[m]) == action && foundPureActionMatch == false) {
-                            foundPureActionMatch = true;
-                            let passed = false;
-                            let actionObject = JSON.parse(JSON.stringify(game[currentNode].actions.actions[i]));
-                            let reqs = {
-                                "reqItemsNot": actionObject.reqItemsNot,
-                                "reqContainersNot": actionObject.reqContainersNot,
-                                "reqLocalNot": actionObject.reqLocalNot,
-                                "reqGlobalNot": actionObject.reqGlobalNot,
-                                "preActionNot": actionObject.preActionNot,
-                                "locVisitsNot": actionObject.locVisitsNot,
-                                "preNodeNot": actionObject.preNodeNot,
-                                "itemEvosNot": actionObject.itemEvosNot,
-                                "pastDesNot": actionObject.pastDesNot,
-                                "reqChanceNot": actionObject.reqChanceNot,
-                                "reqMonitorsNot": actionObject.reqMonitorsNot,
-                                "reqFailsNot": actionObject.reqFailsNot,
-                                "reqValidsNot": actionObject.reqValidsNot,
-                                "reqAll": actionObject.reqAll,
-                                "reqItems": actionObject.reqItems,
-                                "reqContainers": actionObject.reqContainers,
-                                "reqLocal": actionObject.reqLocal,
-                                "reqGlobal": actionObject.reqGlobal,
-                                "preAction": actionObject.preAction,
-                                "locVisits": actionObject.locVisits,
-                                "preNode": actionObject.preNode,
-                                "itemEvos": actionObject.itemEvos,
-                                "pastDes": actionObject.pastDes,
-                                "reqChance": actionObject.reqChance,
-                                "reqMonitors": actionObject.reqMonitors,
-                                "reqFails": actionObject.reqFails,
-                                "reqValids": actionObject.reqValids
+                            //Check if constructed action fields are populated, if so, ignore pure action match
+                            let constructedInputsActive = false;
+                            if (game[currentNode].actions.actions[i].actionVerbs != '') {
+                                constructedInputsActive = true;
                             }
-                            if (checkRequirements(reqs, false)) {
-                                passed = true;
-                                let mainAction = actionObject.actions.split(/\s*,\s*/)[0].toUpperCase();
-                                let maxTimes;
-                                if (actionObject.max != '' && actionObject.max != null) {
-                                    maxTimes = +actionObject.max;
-                                } else {
-                                    maxTimes = 9999;
+                            if (game[currentNode].actions.actions[i].primaryNouns != '') {
+                                constructedInputsActive = true;
+                            }
+                            if (game[currentNode].actions.actions[i].secondaryIndex != '') {
+                                constructedInputsActive = true;
+                            }
+                            if (game[currentNode].actions.actions[i].requiredWords != '') {
+                                constructedInputsActive = true;
+                            }
+                            if (!constructedInputsActive){
+                                foundPureActionMatch = true;
+                                let passed = false;
+                                let actionObject = JSON.parse(JSON.stringify(game[currentNode].actions.actions[i]));
+                                let reqs = {
+                                    "reqItemsNot": actionObject.reqItemsNot,
+                                    "reqContainersNot": actionObject.reqContainersNot,
+                                    "reqLocalNot": actionObject.reqLocalNot,
+                                    "reqGlobalNot": actionObject.reqGlobalNot,
+                                    "preActionNot": actionObject.preActionNot,
+                                    "locVisitsNot": actionObject.locVisitsNot,
+                                    "preNodeNot": actionObject.preNodeNot,
+                                    "itemEvosNot": actionObject.itemEvosNot,
+                                    "pastDesNot": actionObject.pastDesNot,
+                                    "reqChanceNot": actionObject.reqChanceNot,
+                                    "reqMonitorsNot": actionObject.reqMonitorsNot,
+                                    "reqFailsNot": actionObject.reqFailsNot,
+                                    "reqValidsNot": actionObject.reqValidsNot,
+                                    "reqAll": actionObject.reqAll,
+                                    "reqItems": actionObject.reqItems,
+                                    "reqContainers": actionObject.reqContainers,
+                                    "reqLocal": actionObject.reqLocal,
+                                    "reqGlobal": actionObject.reqGlobal,
+                                    "preAction": actionObject.preAction,
+                                    "locVisits": actionObject.locVisits,
+                                    "preNode": actionObject.preNode,
+                                    "itemEvos": actionObject.itemEvos,
+                                    "pastDes": actionObject.pastDes,
+                                    "reqChance": actionObject.reqChance,
+                                    "reqMonitors": actionObject.reqMonitors,
+                                    "reqFails": actionObject.reqFails,
+                                    "reqValids": actionObject.reqValids
                                 }
-                                let usedTimes = 0;
-                                for (let j = 0; j < save.actions.length; j++) {
-                                    if (save.actions[j] == mainAction) {
-                                        usedTimes++;
+                                if (checkRequirements(reqs, false)) {
+                                    passed = true;
+                                    let mainAction = actionObject.actions.split(/\s*,\s*/)[0].toUpperCase();
+                                    let maxTimes;
+                                    if (actionObject.max != '' && actionObject.max != null) {
+                                        maxTimes = +actionObject.max;
+                                    } else {
+                                        maxTimes = 9999;
                                     }
-                                }
-                                if (!(usedTimes >= maxTimes)) {
-                                //Action is valid - perform action operations
-                                    let costs = actionObject.costs.split(/\s*,\s*/);
-                                    let drops = actionObject.drops.split(/\s*,\s*/);
-                                    let move = actionObject.move.split(/\s*,\s*/);
-                                    let visibility = actionObject.visibility;
-                                    pushAction(mainAction);
-
-                                    //Handle global actions
-                                    if (isGlobal == true) {
-                                        game[currentNode].actions.actions.splice(i, 1);
+                                    let usedTimes = 0;
+                                    for (let j = 0; j < save.actions.length; j++) {
+                                        if (save.actions[j] == mainAction) {
+                                            usedTimes++;
+                                        }
                                     }
+                                    if (!(usedTimes >= maxTimes)) {
+                                    //Action is valid - perform action operations
+                                        let costs = actionObject.costs.split(/\s*,\s*/);
+                                        let drops = actionObject.drops.split(/\s*,\s*/);
+                                        let move = actionObject.move.split(/\s*,\s*/);
+                                        let visibility = actionObject.visibility;
+                                        pushAction(mainAction);
 
-                                    //Handle action costs
-                                    if (costs != "" && costs != null) {
-                                        for (let k = 0; k < costs.length; k++) {
-                                            for (let l = 0; l < save.items.length; l++) {
-                                                if (save.items[l].name.includes(costs[k])) {
-                                                    save.items.splice(l, 1);
-                                                    break;
+                                        //Handle global actions
+                                        if (isGlobal == true) {
+                                            game[currentNode].actions.actions.splice(i, 1);
+                                        }
+
+                                        //Handle action costs
+                                        if (costs != "" && costs != null) {
+                                            for (let k = 0; k < costs.length; k++) {
+                                                for (let l = 0; l < save.items.length; l++) {
+                                                    if (save.items[l].name.includes(costs[k])) {
+                                                        save.items.splice(l, 1);
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                    //Handle action drops
-                                    if (drops != "" && drops != null) {
-                                        for (let k = 0; k < drops.length; k++) {
-                                            for (let l = 0; l < save.items.length; l++) {
-                                                if (save.items[l].name.includes(drops[k])) {
-                                                    save.nodes[currentNode].items.push(save.items[l]);
-                                                    save.items.splice(l, 1);
+                                        //Handle action drops
+                                        if (drops != "" && drops != null) {
+                                            for (let k = 0; k < drops.length; k++) {
+                                                for (let l = 0; l < save.items.length; l++) {
+                                                    if (save.items[l].name.includes(drops[k])) {
+                                                        save.nodes[currentNode].items.push(save.items[l]);
+                                                        save.items.splice(l, 1);
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                    //Handle action visibility
-                                    switch(visibility) {
-                                        case 'none':
-                                            break;
-                                        case 'on':
-                                            save.nodes[currentNode].visibility = 'true';
-                                            break;
-                                        case 'off':
-                                            save.nodes[currentNode].visibility = 'false';
-                                        case 'switch':
-                                            if (save.nodes[currentNode].visibility == 'true') {
-                                                save.nodes[currentNode].visibility = 'false';
-                                            } else {
+                                        //Handle action visibility
+                                        switch(visibility) {
+                                            case 'none':
+                                                break;
+                                            case 'on':
                                                 save.nodes[currentNode].visibility = 'true';
-                                            }
-                                            break;
-                                        default:
-                                            break;
+                                                break;
+                                            case 'off':
+                                                save.nodes[currentNode].visibility = 'false';
+                                            case 'switch':
+                                                if (save.nodes[currentNode].visibility == 'true') {
+                                                    save.nodes[currentNode].visibility = 'false';
+                                                } else {
+                                                    save.nodes[currentNode].visibility = 'true';
+                                                }
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        //Handle action move
+                                        if (move != "" && move != null) {
+                                            let node = `${move[0]},${move[1]},${move[2]}`;
+                                            parseNode(node);
+                                        }
+                                        displayMessage(actionObject.response, false);
+                                        sentMessage = true;
+                                    } else {
+                                        displayMessage("You cannot do that anymore.", false);
+                                        sentMessage = true;
                                     }
-                                    //Handle action move
-                                    if (move != "" && move != null) {
-                                        let node = `${move[0]},${move[1]},${move[2]}`;
-                                        parseNode(node);
-                                    }
-                                    displayMessage(actionObject.response, false);
-                                    sentMessage = true;
                                 } else {
-                                    displayMessage("You cannot do that anymore.", false);
+                                    displayMessage(actionObject.fail, false);
                                     sentMessage = true;
                                 }
-                            } else {
-                                displayMessage(actionObject.fail, false);
-                                sentMessage = true;
+                                //Update monitors
+                                updateMonitors(action, passed, false);
+                                handleDisplayableMonitors();
                             }
-                            //Update monitors
-                            updateMonitors(action, passed, false);
-                            handleDisplayableMonitors();
                         }
                     }
                 }
